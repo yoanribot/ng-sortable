@@ -55,7 +55,7 @@
             dragHandled, //drag handled.
             isDisabled = false; // drag enabled
 
-          hasTouch = $window.hasOwnProperty('ontouchstart');
+          hasTouch = $window.hasOwnProperty && $window.hasOwnProperty('ontouchstart');
 
           if (sortableConfig.handleClass) {
             element.addClass(sortableConfig.handleClass);
@@ -63,10 +63,10 @@
 
           scope.itemScope = itemController.scope;
 
-          scope.$watch('sortableScope.isDisabled', function(newVal) {
-            if(isDisabled !== newVal) {
+          scope.$watch('sortableScope.isDisabled', function (newVal) {
+            if (isDisabled !== newVal) {
               isDisabled = newVal;
-              if(isDisabled) {
+              if (isDisabled) {
                 unbindDrag();
               } else {
                 bindDrag();
@@ -75,12 +75,12 @@
           });
 
           /**
-          * Listens for a 10px movement before
-          * dragStart is called to allow for
-          * a click event on the element.
-          *
-          * @param event - the event object.
-          */
+           * Listens for a 10px movement before
+           * dragStart is called to allow for
+           * a click event on the element.
+           *
+           * @param event - the event object.
+           */
           dragListen = function (event) {
 
             var unbindMoveListen = function () {
@@ -90,20 +90,24 @@
               element.unbind('touchend', unbindMoveListen);
               element.unbind('touchcancel', unbindMoveListen);
             };
-            
+
             var startPosition;
             var moveListen = function (e) {
-              e.preventDefault();
+              if (e.preventDefault) {
+                e.preventDefault();
+              } else {
+                e.returnValue = false;
+              }
               var eventObj = $helper.eventObj(e);
               if (!startPosition) {
-                startPosition = { clientX: eventObj.clientX, clientY: eventObj.clientY };
+                startPosition = {clientX: eventObj.clientX, clientY: eventObj.clientY};
               }
               if (Math.abs(eventObj.clientX - startPosition.clientX) + Math.abs(eventObj.clientY - startPosition.clientY) > 10) {
                 unbindMoveListen();
                 dragStart(event);
               }
             };
-            
+
             angular.element($document).bind('mousemove', moveListen);
             angular.element($document).bind('touchmove', moveListen);
             element.bind('mouseup', unbindMoveListen);
@@ -133,15 +137,19 @@
             }
             // Set the flag to prevent other items from inheriting the drag event
             dragHandled = true;
-            event.preventDefault();
+            if (event.preventDefault) {
+              event.preventDefault();
+            } else {
+              event.returnValue = false;
+            }
             eventObj = $helper.eventObj(event);
 
             // (optional) Scrollable container as reference for top & left offset calculations, defaults to Document
-            scrollableContainer = angular.element($document[0].querySelector(scope.sortableScope.options.scrollableContainer)).length > 0 ?
-              $document[0].querySelector(scope.sortableScope.options.scrollableContainer) : $document[0].documentElement;
+            var element = $document[0].querySelector(scope.sortableScope.options.scrollableContainer); // patch
+            scrollableContainer = (element && angular.element(element).length > 0) ? element : $document[0].documentElement; // patch
 
-            containment = angular.element($document[0].querySelector(scope.sortableScope.options.containment)).length > 0 ?
-              angular.element($document[0].querySelector(scope.sortableScope.options.containment)) : angular.element($document[0].body);
+            var element2 = $document[0].querySelector(scope.sortableScope.options.containment); // patch
+            containment = (element2 && angular.element(element2).length > 0) ? angular.element(element2) : angular.element($document[0].body); // patch
             //capture mouse move on containment.
             containment.css('cursor', 'move');
 
@@ -157,7 +165,7 @@
             dragElement.css('height', $helper.height(scope.itemScope.element) + 'px');
 
             placeHolder = angular.element($document[0].createElement(tagName))
-                .addClass(sortableConfig.placeHolderClass).addClass(scope.sortableScope.options.additionalPlaceholderClass);
+              .addClass(sortableConfig.placeHolderClass).addClass(scope.sortableScope.options.additionalPlaceholderClass);
             placeHolder.css('width', $helper.width(scope.itemScope.element) + 'px');
             placeHolder.css('height', $helper.height(scope.itemScope.element) + 'px');
 
@@ -255,7 +263,11 @@
             }
             if (dragElement) {
 
-              event.preventDefault();
+              if (event.preventDefault) {
+                event.preventDefault();
+              } else {
+                event.returnValue = false;
+              }
 
               eventObj = $helper.eventObj(event);
               $helper.movePosition(eventObj, dragElement, itemPosition, containment, containerPositioning, scrollableContainer);
@@ -378,7 +390,11 @@
             if (!dragHandled) {
               return;
             }
-            event.preventDefault();
+            if (event.preventDefault) {
+              event.preventDefault();
+            } else {
+              event.returnValue = false;
+            }
             if (dragElement) {
               //rollback all the changes.
               rollbackDragChanges();
@@ -411,7 +427,11 @@
             if (!dragHandled) {
               return;
             }
-            event.preventDefault();
+            if (event.preventDefault) {
+              event.preventDefault();
+            } else {
+              event.returnValue = false;
+            }
 
             if (dragElement) {
               //rollback all the changes.

@@ -42,7 +42,9 @@
          */
         offset: function (element, scrollableContainer) {
           var boundingClientRect = element[0].getBoundingClientRect();
-          if (!scrollableContainer) { scrollableContainer = $document[0].documentElement; }
+          if (!scrollableContainer) {
+            scrollableContainer = $document[0].documentElement;
+          }
 
           return {
             width: boundingClientRect.width || element.prop('offsetWidth'),
@@ -86,6 +88,14 @@
           return touchInvalid;
         },
 
+        pageX: function (event) {
+          return (event.pageX || (event.clientX + document.body.scrollLeft));
+        },
+
+        pageY: function (event) {
+          return (event.pageY || (event.clientY + document.body.scrollTop));
+        },
+
         /**
          * Get the start position of the target element according to the provided event properties.
          *
@@ -96,10 +106,12 @@
          */
         positionStarted: function (event, target, scrollableContainer) {
           var pos = {};
-          pos.offsetX = event.pageX - this.offset(target, scrollableContainer).left;
-          pos.offsetY = event.pageY - this.offset(target, scrollableContainer).top;
-          pos.startX = pos.lastX = event.pageX;
-          pos.startY = pos.lastY = event.pageY;
+          var pageX = this.pageX(event);
+          var pageY = this.pageY(event);
+          pos.offsetX = pageX - this.offset(target, scrollableContainer).left;
+          pos.offsetY = pageY - this.offset(target, scrollableContainer).top;
+          pos.startX = pos.lastX = pageX;
+          pos.startY = pos.lastY = pageY;
           pos.nowX = pos.nowY = pos.distX = pos.distY = pos.dirAx = 0;
           pos.dirX = pos.dirY = pos.lastDirX = pos.lastDirY = pos.distAxX = pos.distAxY = 0;
           return pos;
@@ -113,13 +125,15 @@
          * @param event the move event.
          */
         calculatePosition: function (pos, event) {
+          var pageX = this.pageX(event);
+          var pageY = this.pageY(event);
           // mouse position last events
           pos.lastX = pos.nowX;
           pos.lastY = pos.nowY;
 
           // mouse position this events
-          pos.nowX = event.pageX;
-          pos.nowY = event.pageY;
+          pos.nowX = pageX;
+          pos.nowY = pageY;
 
           // distance mouse moved between events
           pos.distX = pos.nowX - pos.lastX;
@@ -167,9 +181,10 @@
         movePosition: function (event, element, pos, container, containerPositioning, scrollableContainer) {
           var bounds;
           var useRelative = (containerPositioning === 'relative');
-
-          element.x = event.pageX - pos.offsetX;
-          element.y = event.pageY - pos.offsetY;
+          var pageX = this.pageX(event);
+          var pageY = this.pageY(event);
+          element.x = pageX - pos.offsetX;
+          element.y = pageY - pos.offsetY;
 
           if (container) {
             bounds = this.offset(container, scrollableContainer);

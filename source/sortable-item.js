@@ -24,8 +24,18 @@
      *
      * @returns {*} - index value.
      */
-    $scope.index = function () {
-      return $scope.sortableScope.modelValue.indexOf($scope.modelValue);
+    $scope.index = function () { // patch
+      var array = $scope.sortableScope.modelValue;
+      if (array.indexOf) {
+        return array.indexOf($scope.modelValue);
+      }
+      for (var i = 0; i < array.length; i++) {
+        if ($scope.modelValue === array[i]) {
+          return i;
+        }
+      }
+      return -1;
+      //return $scope.sortableScope.modelValue.indexOf($scope.modelValue);
     };
 
     /**
