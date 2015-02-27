@@ -212,8 +212,8 @@
           }
 
           element.css({
-            'left': element.x + 'px',
-            'top': element.y + 'px'
+            'left': element.x ? element.x + 'px' : '',
+            'top': element.y ? element.y + 'px' : ''
           });
 
           this.calculatePosition(pos, event);

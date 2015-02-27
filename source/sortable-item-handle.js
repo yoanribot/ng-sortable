@@ -272,8 +272,10 @@
               eventObj = $helper.eventObj(event);
               $helper.movePosition(eventObj, dragElement, itemPosition, containment, containerPositioning, scrollableContainer);
 
-              targetX = eventObj.pageX - $document[0].documentElement.scrollLeft;
-              targetY = eventObj.pageY - ($window.pageYOffset || $document[0].documentElement.scrollTop);
+              var pageX = $helper.pageX(eventObj);
+              var pageY = $helper.pageY(eventObj);
+              targetX = pageX - $document[0].documentElement.scrollLeft;
+              targetY = pageY - ($window.pageYOffset || $document[0].documentElement.scrollTop);
 
               //IE fixes: hide show element, call element from point twice to return pick correct element.
               dragElement.addClass(sortableConfig.hiddenClass);
