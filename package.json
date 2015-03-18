@@ -1,13 +1,13 @@
 {
   "name": "ng-sortable-ie8",
-  "version": "0.1.0",
+  "version": "1.2.2",
   "homepage": "https://github.com/kalmykov-sergey/ng-sortable",
   "author": "Muhammed Ashik <https://github.com/a5hik>",
   "description": "Angular Library for Drag and Drop, supports Sortable and Draggable.",
-  "main": [
-    "dist/ng-sortable.min.js",
-    "dist/ng-sortable.min.css"
-  ],
+  "main": "ng-sortable",
+  "directories": {
+    "lib": "dist"
+  },
   "keywords": [
     "angular",
     "drag",
@@ -17,7 +17,19 @@
     "touch",
     "directive"
   ],
-  "dependencies": {},
+
+  "jspm": {
+    "format":"global",
+    "dependencies": {
+      "angular": "1.2.28"
+    },
+    "shim": {
+      "some/global": {
+        "deps": ["angular"]
+      }
+    }
+  },
+
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-autoprefixer": "~0.4.0",
