@@ -806,6 +806,18 @@
               targetX = pageX - $document[0].documentElement.scrollLeft;
               targetY = pageY - ($window.pageYOffset || $document[0].documentElement.scrollTop);
 
+              // Hack for have autoscroll on mobile (when the list of elements is too big) !!!!
+              // Is going to be updated and fixed in the new release of the pluggin
+              // Is using in the college selection and the high school selection page to let the users
+              // sort the schools
+
+              if (targetY > $window.innerHeight) {
+                $window.scrollBy(0, 10);
+              }
+              if (targetY < 10) {
+                $window.scrollBy(0, -10);
+              }
+
               //IE fixes: hide show element, call element from point twice to return pick correct element.
               dragElement.addClass(sortableConfig.hiddenClass);
               $document[0].elementFromPoint(targetX, targetY);
